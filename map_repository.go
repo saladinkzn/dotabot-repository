@@ -1,17 +1,20 @@
 package repository
 
-type SubscriptionRepository interface {
-	GetLastKnownMatchId(subscription TelegramMatchSubscription) (int64, error)
-	SaveLastKnownMatchId(subscription TelegramMatchSubscription, matchId uint64) error
-	FindAll() ([]TelegramMatchSubscription, error)
-}
-
 type MapRespository struct {
 	holder map[TelegramMatchSubscription]uint64
 }
 
 func CreateMapRepository() SubscriptionRepository {
 	return &MapRespository{holder: make(map[TelegramMatchSubscription]uint64)}
+}
+
+func (this MapRespository) FindByChatId(chatId int64) (result []TelegramMatchSubscription, err error) {
+	for k, _ := range this.holder {
+		if k.ChatId == chatId {
+			result = append(result, k)
+		}
+	}
+	return result, nil
 }
 
 func (this MapRespository) FindAll() ([]TelegramMatchSubscription, error) {
